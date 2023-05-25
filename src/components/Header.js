@@ -1,5 +1,5 @@
 import React from "react";
-import headerlogo from "../images/Vector.svg";
+import headerLogo from "../images/Vector.svg";
 
 function Header() {
   return (
@@ -7,7 +7,7 @@ function Header() {
       <header className="header">
         <img
           className="header__logo"
-          src={headerlogo}
+          src={headerLogo}
           alt="логотип места Росиии"
         />
       </header>

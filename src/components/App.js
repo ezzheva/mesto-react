@@ -137,11 +137,7 @@ function App() {
 
         <Footer />
 
-        <ImagePopup
-          card={selectedCard}
-          onClose={closeAllPopups}
-          // name="full-screen"
-        />
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </div>
     </div>
   );
