@@ -1,8 +1,33 @@
-import React from "react";
+import React, { useContext } from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Card({ card, onCardClick }) {
+function Card({ card, onCardClick, onCardLike, onCardDelete }) {
+
+  const currentUser = useContext(CurrentUserContext);
+
+  /**корзина удаления */
+  const isOwn = card.owner._id === currentUser._id; // Определяем, являемся ли мы владельцем текущей карточки
+  // const cardDeleteButtonClassName =  
+  //   `card__delete ${isOwn ? 'card__delete_active' : ''}`; // Создаём переменную, которую после зададим в `className` для кнопки корзины
+  
+ /**лaйк */ 
+const isLiked = card.likes.some(i => i._id === currentUser._id); // Определяем, есть ли у карточки лайк, поставленный текущим пользователем
+const cardLikeButtonClassName =
+  `card__like ${isLiked ? 'card__like_active' : ''}`; // Создаём переменную, которую после зададим в `className` для кнопки лайка
+
+  /**функция карточка на весь экран */
   function handleCardClick() {
     onCardClick(card);
+  }
+
+  /**функция лайк */
+  function handleLikeClick() {
+    onCardLike(card);
+  }
+
+  /**функция удаления */
+  function handleDeleteClick() {
+    onCardDelete(card);
   }
 
   return (
@@ -18,17 +43,19 @@ function Card({ card, onCardClick }) {
         <div className="card__like-counter">
           <button
             type="button"
-            className="card__like"
+            className={cardLikeButtonClassName}
             aria-label="like"
+            onClick={handleLikeClick}
           ></button>
           <p className="card__number-likes">{card.likes.length}</p>
         </div>
       </div>
-      <button
+      {isOwn && (<button
         type="button"
         className="card__delete"
         aria-label="delete"
-      ></button>
+        onClick={handleDeleteClick}
+      ></button>)}
     </div>
   );
 }

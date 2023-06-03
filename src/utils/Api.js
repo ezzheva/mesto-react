@@ -47,8 +47,8 @@ class Api {
       method: "PATCH",
       headers: this._headers,
       body: JSON.stringify({
-        name: data["user-name"],
-        about: data["about"],
+        name: data.name,
+        about: data.about,
       }),
     }).then((res) => this._checkError(res));
   }
@@ -85,6 +85,13 @@ class Api {
       body: JSON.stringify(data),
     }).then((res) => this._checkError(res));
   }
+
+    // changeLikeCardStatus(cardId, isLiked) {
+    //   return fetch(`${this._url}/cards/${cardId}/likes`, {
+    //     method: isLiked ? "PUT" : "DELETE",
+    //     headers: this._headers,
+    //   }).then((res) => this._checkError(res));
+    // }
 }
 
 /**обьект Api */
