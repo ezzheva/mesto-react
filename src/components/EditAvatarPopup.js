@@ -1,22 +1,21 @@
 import React, { useRef, useState } from "react";
 import PopupWithForm from "./PopupWithForm";
 
+function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+  const [avatar, setAvatar] = useState("");
+  const avatarRef = useRef();
 
-function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
-    const [avatar,setAvatar] = useState("");
-    const avatarRef = useRef();
+  function handleChangeAvatar(evt) {
+    setAvatar(evt.target.value);
+  }
 
-    function handleChangeAvatar(evt) {
-        setAvatar(evt.target.value);
-      }
-
-    function handleSubmit(e) {
-        e.preventDefault();
-        onUpdateAvatar({
-          avatar: avatarRef.current.value
-        });
-        onClose();
-      } 
+  function handleSubmit(e) {
+    e.preventDefault();
+    onUpdateAvatar({
+      avatar: avatarRef.current.value,
+    });
+    onClose();
+  }
 
   return (
     <PopupWithForm
@@ -25,7 +24,7 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
       buttonText="Создать"
       isOpen={isOpen}
       onClose={onClose}
-      handleSubmit = {handleSubmit}
+      handleSubmit={handleSubmit}
     >
       <input
         type="url"

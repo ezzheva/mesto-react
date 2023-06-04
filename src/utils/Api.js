@@ -27,8 +27,8 @@ class Api {
       method: "POST",
       headers: this._headers,
       body: JSON.stringify({
-        name: cardData["element-name"],
-        link: cardData["element-link"],
+        name: cardData.name,
+        link: cardData.link,
       }),
     }).then((res) => this._checkError(res));
   }
@@ -85,13 +85,6 @@ class Api {
       body: JSON.stringify(data),
     }).then((res) => this._checkError(res));
   }
-
-    // changeLikeCardStatus(cardId, isLiked) {
-    //   return fetch(`${this._url}/cards/${cardId}/likes`, {
-    //     method: isLiked ? "PUT" : "DELETE",
-    //     headers: this._headers,
-    //   }).then((res) => this._checkError(res));
-    // }
 }
 
 /**обьект Api */

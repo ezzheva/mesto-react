@@ -15,7 +15,8 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   }
   function handleSubmit(evt) {
     evt.preventDefault();
-    onUpdateUser({// Передаём значения управляемых компонентов во внешний обработчик
+    onUpdateUser({
+      // Передаём значения управляемых компонентов во внешний обработчик
       name: name,
       about: about,
     });
@@ -23,8 +24,8 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   }
 
   useEffect(() => {
-      setName(currentUser.name);
-      setAbout(currentUser.about);
+    setName(currentUser.name);
+    setAbout(currentUser.about);
   }, [currentUser]);
 
   return (
@@ -34,7 +35,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       buttonText="Сохранить"
       isOpen={isOpen}
       onClose={onClose}
-      handleSubmit = {handleSubmit}
+      handleSubmit={handleSubmit}
     >
       <input
         type="text"
