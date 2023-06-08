@@ -21,7 +21,7 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
-  
+
   /**  отслеживания состояния загрузки во время ожидания ответа от сервера*/
   const [isLoading, setIsLoading] = useState(false);
 
