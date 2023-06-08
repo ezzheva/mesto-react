@@ -19,8 +19,11 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   /** попап карточки */
   const [selectedCard, setSelectedCard] = useState({});
-  const [currentUser, setCurrentUser] = useState("");
+  const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  
+  /**  отслеживания состояния загрузки во время ожидания ответа от сервера*/
+  const [isLoading, setIsLoading] = useState(false);
 
   /**попап редактирование профиля */
   function handleEditProfileClick() {
@@ -45,11 +48,12 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setSelectedCard({});
   }
+
   /**лайк */
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id); // Снова проверяем, есть ли уже лайк на этой карточке
     if (!isLiked) {
-      api // Отправляем запрос в API и получаем обновлённые данные карточки
+      api
         .getLike(card._id)
         .then((newCard) => {
           setCards((state) =>
@@ -79,43 +83,64 @@ function App() {
       .deleteCard(card._id)
       .then(() => {
         setCards((cards) => cards.filter((c) => c._id !== card._id));
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err);
       });
   }
-
-  function handleUpdateUser(data) {
-    api
-      .patchUserInfo(data)
-      .then((userInfo) => {
-        setCurrentUser(userInfo);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  /**универсальную функцию, которая принимает функцию запроса*/
+  function handleSubmit(request) {
+    // изменяем текст кнопки до вызова запроса
+    setIsLoading(true);
+    request()
+      // закрывать попап нужно только в `then`
+      .then(closeAllPopups)
+      .catch(console.error)
+      // в каждом запросе в `finally` нужно возвращать обратно начальный текст кнопки
+      .finally(() => setIsLoading(false));
+  }
+  /** формы профиля*/
+  function handleUpdateUser(inputValues) {
+    // создаем функцию, которая возвращает промис, так как любой запрос возвращает его
+    function makeRequest() {
+      // `return` позволяет потом дальше продолжать цепочку `then, catch, finally`
+      return api.patchUserInfo(inputValues).then(setCurrentUser);
+    }
+    // вызываем универсальную функцию, передавая в нее запрос
+    handleSubmit(makeRequest);
+  }
+  // function handleUpdateUser(data) {
+  //   setIsLoading(true)
+  //   api
+  //     .patchUserInfo(data)
+  //     .then((userInfo) => {
+  //       setCurrentUser(userInfo)
+  //       closeAllPopups()
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     })
+  // }
+  /**форма аватара */
+  function handleUpdateAvatar(inputValues) {
+    function makeRequest() {
+      return api.patchAvatarInfo(inputValues).then(setCurrentUser);
+    }
+    handleSubmit(makeRequest);
   }
 
-  function handleUpdateAvatar(data) {
-    api
-      .patchAvatarInfo(data)
-      .then((newAvatar) => {
-        setCurrentUser(newAvatar);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function handleAddPlaceSubmit(cardData) {
-    api
-      .addNewCard(cardData)
-      .then((newCard) => {
+  // /**форма добавления карточки */
+  function handleAddPlaceSubmit(inputValues) {
+    function makeRequest() {
+      return api.addNewCard(inputValues).then((newCard) => {
         setCards([newCard, ...cards]);
-      })
-      .catch((err) => {
-        console.log(err);
       });
+    }
+    handleSubmit(makeRequest);
   }
 
   useEffect(() => {
@@ -149,18 +174,21 @@ function App() {
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
             onUpdateUser={handleUpdateUser}
+            isLoading={isLoading}
           />
 
           <AddPlacePopup
             isOpen={isAddPlacePopupOpen}
             onClose={closeAllPopups}
             onAddPlace={handleAddPlaceSubmit}
+            isLoading={isLoading}
           />
 
           <EditAvatarPopup
             isOpen={isEditAvatarPopupOpen}
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
+            isLoading={isLoading}
           />
 
           <PopupWithForm

@@ -1,6 +1,9 @@
 import React from "react";
+import { usePopupClose } from "../hook/usePopupClose";
 
 function ImagePopup({ card, onClose }) {
+  usePopupClose(card?.link, onClose);
+
   return (
     <div
       className={`popup popup_full-screen 
