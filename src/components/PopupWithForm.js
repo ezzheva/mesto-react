@@ -1,4 +1,5 @@
 import React from "react";
+import { usePopupClose } from "../hook/usePopupClose";
 
 function PopupWithForm({
   name,
@@ -9,6 +10,7 @@ function PopupWithForm({
   onClose,
   handleSubmit,
 }) {
+  usePopupClose(isOpen, onClose);
   return (
     <div
       className={`popup popup-${name}
