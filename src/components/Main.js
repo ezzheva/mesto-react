@@ -9,7 +9,8 @@ function Main({
   onAddPlace,
   onCardClick,
   onCardLike,
-  onCardDelete,
+  onDeleteCard,
+  onPopupConfirm,
 }) {
   const currentUser = useContext(CurrentUserContext);
   const cardsElements = cards.map((card) => (
@@ -18,7 +19,8 @@ function Main({
       card={card}
       onCardClick={onCardClick}
       onCardLike={onCardLike}
-      onCardDelete={onCardDelete}
+      onCardDelete={onDeleteCard}
+      onPopupConfirm={onPopupConfirm}
     />
   ));
 

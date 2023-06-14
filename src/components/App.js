@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header.js";
 import Main from "./Main.js";
 import Footer from "./Footer.js";
-import PopupWithForm from "./PopupWithForm.js";
+//import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 import api from "../utils/Api.js";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
+import PopupConfirm from "./PopupConfirm.js";
 
 function App() {
   /**попап редактирование профиля */
@@ -24,6 +25,11 @@ function App() {
 
   /**  отслеживания состояния загрузки во время ожидания ответа от сервера*/
   const [isLoading, setIsLoading] = useState(false);
+  
+  /**попап удаления */
+  const [isDeleteConfirmation, setIsDeleteConfirmation] = useState(false);
+  const [cardDelete, setCardDelete] = useState({});
+
 
   /**попап редактирование профиля */
   function handleEditProfileClick() {
@@ -47,6 +53,8 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard({});
+    setCardDelete({});
+    setIsDeleteConfirmation(false);
   }
 
   /**лайк */
@@ -79,15 +87,12 @@ function App() {
 
   /**удаление карточки */
   function handleCardDelete(card) {
-    api
-      .deleteCard(card._id)
-      .then(() => {
+    function makeRequest() {
+      return api.deleteCard(card._id).then(() => {
         setCards((cards) => cards.filter((c) => c._id !== card._id));
-        closeAllPopups();
-      })
-      .catch((err) => {
-        console.log(err);
       });
+    }
+    handleSubmit(makeRequest);
   }
   /**универсальную функцию, которая принимает функцию запроса*/
   function handleSubmit(request) {
@@ -166,8 +171,9 @@ function App() {
             onEditAvatar={handleEditAvatarClick}
             onCardClick={handleCardClick}
             onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
+            onDeleteCard={setCardDelete}
             cards={cards}
+            onPopupConfirm={setIsDeleteConfirmation}
           />
 
           <EditProfilePopup
@@ -190,12 +196,13 @@ function App() {
             onUpdateAvatar={handleUpdateAvatar}
             isLoading={isLoading}
           />
-
-          <PopupWithForm
-            name="trash"
-            title="Вы уверенны?"
-            buttonText="Да"
+          
+          <PopupConfirm
             onClose={closeAllPopups}
+            isOpen={isDeleteConfirmation}
+            onCardDelete={handleCardDelete}
+            isLoading={isLoading}
+            card={cardDelete}
           />
 
           <Footer />
